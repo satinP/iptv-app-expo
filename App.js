@@ -1,21 +1,24 @@
-import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View, StatusBar  } from 'react-native';
+import VideoList from './src/components/VideoList';
+
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
+    <View contentContainerStyle={styles.container}>
+      <VideoList style={styles.test}/>
       <StatusBar style="auto" />
     </View>
   );
 }
-
+// const windowHeigth = 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#fff',
+    // backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
   },
+  test: {
+    height: 400
+  }
 });
