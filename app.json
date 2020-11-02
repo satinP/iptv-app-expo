@@ -1,0 +1,12 @@
+{
+  "name": "expo-iptv-app",
+  "displayName": "expo-iptv-app",
+  "expo": {
+    "name": "expo-iptv-app",
+    "slug": "expo-iptv-app",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  }
+}
