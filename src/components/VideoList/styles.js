@@ -15,9 +15,8 @@ const styles = StyleSheet.create({
     borderBottomWidth: StyleSheet.hairlineWidth,
   },
   scrollView: {
-    height: '50%',
+    height: '45%',
     width: '100%',
-    margin: 10,
     alignSelf: 'center',
     borderColor: 'black',
     backgroundColor: 'lightblue'

@@ -1,37 +1,34 @@
 import React, { useState, useEffect } from 'react';
-import { Dimensions, View, Text, ScrollView, Button } from 'react-native';
+import { Dimensions, View, Text, FlatList } from 'react-native';
 import { BorderlessButton } from 'react-native-gesture-handler';
 import { Video } from 'expo-av';
 
 import styles from './styles';
+// import AsyncStorage from '@react-native-async-storage/async-storage';
+import { SearchBar } from 'react-native-elements';
+
 
 const Separator = () => (
   <View style={styles.separator} />
 );
 
 export default function VideoList() {
-  const [ filteredChannel, setFilteredChannels ] = useState();
-  const [ channelList, setChannelList ] = useState();
+  const [ filteredChannel, setFilteredChannels ] = useState([]);
+  const [ channelList, setChannelList ] = useState([]);
   const [ selectedChannel, setSelectedChannel ] = useState('');
+  const [ search, setSearch ] = useState('');
 
   useEffect(() => {
-    if (filteredChannel) {
-      setFilteredChannels(null);
-    }
-
     fetch('https://iptv-org.github.io/iptv/channels.json')
-      .then(res => res.json())
-      .then(responseJson => {
-
+      .then((response) => response.json())
+      .then((responseJson) => {
         setChannelList(responseJson);
-
-        filterChannel();
+        // setFilteredChannels(responseJson);
+        filterChannel(responseJson,'Brazil');
       })
       .catch(error =>{
         console.log(error);
       });
-
-    
   },[]);
 
   /**
@@ -39,50 +36,77 @@ export default function VideoList() {
    * @param field   Determines which field will be filtered
    * @param input   Determines the string that will be filtered
    */
-  function filterChannel(field, input) {
-    const filteredChannelList = channelList.filter(channel => {
-      return channel.country.name == 'Brazil';
-      // return channel.category == 'Documentary';
+  function filterChannel(data, value) {
+    const filteredChannelList = data && data.filter(channel => {
+      return channel.country.name == value;
     });
 
     setFilteredChannels(filteredChannelList);
   }
 
+  const searchFilterFunction = (text) => {
+    if (text) {
+      const newData = channelList.filter(function (item) {
+        const itemData = item.name
+          ? item.name.toUpperCase()
+          : ''.toUpperCase();
+        const textData = text.toUpperCase();
+        return itemData.indexOf(textData) > -1;
+      });
+      setFilteredChannels(newData);
+      setSearch(text);
+    } else {
+      setFilteredChannels(channelList);
+      setSearch(text);
+    }
+  };
+
+  const renderItem = ({item}) => {
+    return (
+      <View tyle={styles.test}>
+        <BorderlessButton style={styles.button}
+          onPress={() => setSelectedChannel(item.url)} >
+            <Text>
+              {item.name}
+            </Text>
+        </BorderlessButton>
+      </View>
+    )
+  };
+
   return (
     <View>
-      <ScrollView contentContainerStyle={styles.container} style={styles.scrollView}>
-        {filteredChannel && filteredChannel.map(channel => {
-          return (
-            <View key={channel.name} style={styles.test}>
-              <BorderlessButton style={styles.button}
-                onPress={() => setSelectedChannel(channel.url)} >
-                  <Text>
-                    {channel.name}
-                  </Text>
-              </BorderlessButton>
-
-              <Separator />
-            </View>
-          )
-        })}
-
-      </ScrollView>
+      <SearchBar
+          round
+          searchIcon={{size: 24}}
+          onChangeText={(text) => searchFilterFunction(text)}
+          onClear={(text) => searchFilterFunction('')}
+          placeholder="Procure o canal aqui..."
+          value={search}
+      />
+      <FlatList contentContainerStyle={styles.container} style={styles.scrollView}
+        data={filteredChannel}
+        ItemSeparatorComponent={Separator}
+        renderItem={renderItem}
+        keyExtractor={(item, index) => index.toString()}
+      />
+      
       <View style={styles.video}>
-          <Video
-            source={{ uri: selectedChannel ? selectedChannel : 
-                          'http://bcsecurelivehls-i.akamaihd.net/hls/live/265320/5043843989001/140130JTDX/index_600.m3u8', 
-                      overrideFileExtensionAndroid: 'm3u8',
-                    }}
-            rate={1.0}
-            volume={1.0}
-            isMuted={false}
-            resizeMode="contain"
-            shouldPlay={true}
-            useNativeControls={true}
-            isLooping
-            style={{ width: Dimensions.get('window').width, height: 300 }}
-          />
-        </View>
+        <Video
+          source={{ uri: selectedChannel ? selectedChannel : 
+                        'http://bcsecurelivehls-i.akamaihd.net/hls/live/265320/5043843989001/140130JTDX/index_600.m3u8', 
+                    overrideFileExtensionAndroid: 'm3u8',
+                  }}
+          rate={1.0}
+          volume={1.0}
+          isMuted={false}
+          resizeMode="contain"
+          shouldPlay={true}
+          useNativeControls={true}
+          isLooping
+          style={{ width: Dimensions.get('window').width, height: 300 }}
+        />
+      </View>
     </View>
   );
 }

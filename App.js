@@ -1,14 +1,14 @@
 import React from 'react';
-import { StyleSheet, View, StatusBar  } from 'react-native';
+import { StyleSheet, StatusBar, SafeAreaView } from 'react-native';
 import VideoList from './src/components/VideoList';
 
 
 export default function App() {
   return (
-    <View contentContainerStyle={styles.container}>
+    <SafeAreaView style={{flex: 1}}>
       <VideoList style={styles.test}/>
       <StatusBar style="auto" />
-    </View>
+    </SafeAreaView>
   );
 }
 // const windowHeigth = 
