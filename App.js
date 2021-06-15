@@ -1,24 +1,21 @@
-import React from 'react';
-import { StyleSheet, StatusBar, SafeAreaView } from 'react-native';
-import VideoList from './src/components/VideoList';
-
+import React from "react";
+import { StyleSheet, StatusBar, SafeAreaView } from "react-native";
+import VideoList from "./src/components/VideoList";
 
 export default function App() {
   return (
-    <SafeAreaView style={{flex: 1}}>
-      <VideoList style={styles.test}/>
-      <StatusBar style="auto" />
+    <SafeAreaView style={styles.container}>
+      <VideoList />
+      <StatusBar />
     </SafeAreaView>
   );
 }
-// const windowHeigth = 
+// const windowHeigth =
 const styles = StyleSheet.create({
   container: {
-    // backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
+    flex: 1,
+    width: "100%",
   },
-  test: {
-    height: 400
-  }
 });
