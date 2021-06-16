@@ -1,7 +1,8 @@
 import { StyleSheet } from "react-native";
 
 const styles = StyleSheet.create({
-  container: {
+  container: {},
+  flatListContainer: {
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "lightgrey",

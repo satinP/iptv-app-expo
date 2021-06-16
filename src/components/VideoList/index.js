@@ -4,10 +4,10 @@ import { BorderlessButton } from "react-native-gesture-handler";
 import { Video } from "expo-av";
 
 import styles from "./styles";
-// import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SearchBar } from "react-native-elements";
 
 import { filter as lodashFilter } from "lodash";
+import { retrieveData, storeData } from "./storage";
 
 const Separator = () => <View style={styles.separator} />;
 
@@ -17,7 +17,20 @@ export default function VideoList() {
   const [selectedChannel, setSelectedChannel] = useState("");
   const [search, setSearch] = useState("");
 
+  const checkSelectedChannel = async () => {
+    try {
+      const channel = await retrieveData("SELECTED_CHANNEL");
+      if (channel !== null) {
+        setSelectedChannel(channel);
+      }
+    } catch (err) {
+      console.error({ err });
+    }
+  };
+
   useEffect(() => {
+    checkSelectedChannel();
+
     fetch("https://iptv-org.github.io/iptv/channels.json")
       .then((response) => response.json())
       .then((responseJson) => {
@@ -57,12 +70,17 @@ export default function VideoList() {
     }
   };
 
+  const handleChannelPress = (url) => {
+    storeData("SELECTED_CHANNEL", url);
+    setSelectedChannel(() => url);
+  };
+
   const renderItem = ({ item }) => {
     return (
       <View style={styles.scrollView}>
         <BorderlessButton
           style={styles.button}
-          onPress={() => setSelectedChannel(item.url)}
+          onPress={() => handleChannelPress(item.url)}
         >
           <Text>{item.name}</Text>
         </BorderlessButton>
@@ -76,26 +94,24 @@ export default function VideoList() {
         round
         searchIcon={{ size: 24 }}
         onChangeText={(text) => searchFilterFunction(text)}
-        onClear={(_) => searchFilterFunction("")}
+        onClear={() => searchFilterFunction("")}
         placeholder="Procure o canal aqui..."
         value={search}
       />
 
       <FlatList
-        contentContainerStyle={styles.container}
+        contentContainerStyle={styles.flatListContainer}
         style={styles.scrollView}
         data={filteredChannel}
         ItemSeparatorComponent={Separator}
         renderItem={renderItem}
-        keyExtractor={(item, index) => index.toString()}
+        keyExtractor={(_, index) => index.toString()}
       />
 
       <View style={styles.video}>
         <Video
           source={{
-            uri: selectedChannel
-              ? selectedChannel
-              : "http://bcsecurelivehls-i.akamaihd.net/hls/live/265320/5043843989001/140130JTDX/index_600.m3u8",
+            uri: selectedChannel,
             overrideFileExtensionAndroid: "m3u8",
           }}
           rate={1.0}
