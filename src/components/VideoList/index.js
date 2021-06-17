@@ -7,7 +7,7 @@ import styles from "./styles";
 import { SearchBar } from "react-native-elements";
 
 import { filter as lodashFilter } from "lodash";
-import { retrieveData, storeData } from "./storage";
+import { retrieveData, storeData } from "../../util/storage";
 
 const Separator = () => <View style={styles.separator} />;
 
